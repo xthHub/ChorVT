@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title> RenWFMS WebUI | {{ L_PageTitle }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/cloud-admin.css') }}" >
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='css/themes/default.css') }}" id="skin-switcher" >
+    <link href="{{ url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
+    {% block LHeader %}
+    {% endblock %}
+    <!-- FONTS -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<!-- HEADER -->
+<header class="navbar clearfix" id="header">
+    <div class="container">
+        <div class="navbar-brand">
+            <!-- COMPANY LOGO -->
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='img/logo/logo_ren.png') }}" alt="Logo" class="img-responsive" height="30" width="120">
+            </a>
+            <!-- /COMPANY LOGO -->
+            <!-- TEAM STATUS FOR MOBILE -->
+            <div class="visible-xs">
+                <a href="#" class="team-status-toggle switcher btn dropdown-toggle">
+                    <i class="fa fa-users"></i>
+                </a>
+            </div>
+            <!-- /TEAM STATUS FOR MOBILE -->
+            <!-- SIDEBAR COLLAPSE -->
+            <div id="sidebar-collapse" class="sidebar-collapse btn">
+                <i class="fa fa-bars"
+                   data-icon1="fa fa-bars"
+                   data-icon2="fa fa-bars" ></i>
+            </div>
+            <!-- /SIDEBAR COLLAPSE -->
+        </div>
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <ul class="nav navbar-nav pull-right">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown user" id="header-user">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img alt="" src="{{ url_for('static', filename='img/avatars/avatar3.jpg') }}" />
+                    <span class="username">
+                        {{ session['AuID'] }}
+                        {% if session['AuType'] > 0 %}
+                            &nbsp;(管理员)
+                        {% endif %}
+                    </span>
+                    <i class="fa fa-angle-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('performLogout') }}"><i class="fa fa-power-off"></i> Log Out</a></li>
+                </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <!-- END TOP NAVIGATION MENU -->
+    </div>
+</header>
+<!-- PAGE -->
+<section id="page">
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-menu nav-collapse">
+            <div class="divide-20"></div>
+
+            <!-- SIDEBAR QUICK-LAUNCH -->
+            <!-- <div id="quicklaunch">
+            <!-- /SIDEBAR QUICK-LAUNCH -->
+
+            <!-- SIDEBAR MENU -->
+            <ul>
+                <li id="active-myWorklist">
+                    <a class="" href="{{ url_for('MyWorkitemManagement') }}">
+                        <i class="fa fa-th-list fa-fw"></i>
+                        <span class="menu-text">我的工作列表</span>
+                        <span id="selected-myWorklist"></span>
+                    </a>
+                </li>
+
+                <li id="active-process">
+                    <a class="" href="{{ url_for('ProcessManagement') }}">
+                        <i class="fa fa-rocket fa-fw"></i>
+                        <span class="menu-text">流程</span>
+                        <span id="selected-process"></span>
+                    </a>
+                </li>
+                {% if session["AuType"] > 0 %}
+                <li id="active-authuser">
+                    <a class="" href="{{ url_for('AuthUserManagement') }}">
+                        <i class="fa fa-user fa-fw"></i>
+                        <span class="menu-text">授权用户</span>
+                        <span id="selected-authuser"></span>
+                    </a>
+                </li>
+                {% endif %}
+                <li id="active-runtime" class="has-sub">
+                    <a class="" href="javascript:;">
+                        <i class="fa fa-cubes fa-fw"></i>
+                        <span class="menu-text">监控</span>
+                        <span class="arrow"></span>
+                        <span id="selected-runtime"></span>
+                    </a>
+                    <ul class="sub">
+                        <li id="current-runtime-runtimerecord">
+                            <a class="" href="{{ url_for('ActiveProcessManagement') }}">
+                                <span class="sub-menu-text">活动流程总览</span>
+                            </a>
+                        </li>
+                        {% if session["AuType"] > 0 %}
+                        <li id="current-runtime-worklist">
+                            <a class="" href="{{ url_for('DomainWorkitemManagement') }}">
+                                <span class="sub-menu-text">工作列表总览</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </li>
+
+                {% if session['AuType'] == 999 %}
+                <li id="active-domainManagement">
+                    <a class="" href="{{ url_for('DomainManagement') }}">
+                        <i class="fa fa-key fa-fw"></i>
+                        <span class="menu-text">租户（域）管理</span>
+                        <span id="selected-domainManagement"></span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if session['AuType'] > 0 %}
+                <li id="active-domainConfig">
+                    <a class="" href="{{ url_for('DomainConfigManagement') }}">
+                        <i class="fa fa-building fa-fw"></i>
+                        <span class="menu-text">域设置</span>
+                        <span id="selected-domainConfig"></span>
+                    </a>
+                </li>
+                {% endif %}
+                <li id="active-selfConfig">
+                    <a class="" href="{{ url_for('SelfConfigManagement') }}">
+                        <i class="fa fa-address-card fa-fw"></i>
+                        <span class="menu-text">个人设置</span>
+                        <span id="selected-selfConfig"></span>
+                    </a>
+                </li>
+            </ul>
+            <!-- /SIDEBAR MENU -->
+        </div>
+    </div>
+    <!-- /SIDEBAR -->
+    <div id="main-content">
+        <!-- SAMPLE BOX CONFIGURATION MODAL FORM-->
+        <div class="modal fade" id="box-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Box Settings</h4>
+                    </div>
+                    <div class="modal-body">
+                        Here goes box setting content.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /SAMPLE BOX CONFIGURATION MODAL FORM-->
+        {% block LBody %}{% endblock %}
+    </div>
+</section>
+<!--/PAGE -->
+<!-- JAVASCRIPT -->
+<!-- Placed at the end of the document so the pages load faster -->
+<!-- JQUERY -->
+<script src="{{ url_for('static', filename='js/jquery/jquery-2.0.3.min.js') }}"></script>
+<!-- BOOTSTRAP -->
+<script src="{{ url_for('static', filename='bootstrap-dist/js/bootstrap.min.js') }}"></script>
+<!-- COOKIE -->
+<script type="text/javascript" src="{{ url_for('static', filename='js/jQuery-Cookie/jquery.cookie.min.js') }}"></script>
+<!-- CUSTOM SCRIPT -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% block LScript %}
+{% endblock %}
+<!-- /JAVASCRIPT -->
+</body>
+</html>

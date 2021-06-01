@@ -1,0 +1,27 @@
+<businessclass initial="Initial" name="GuestOrder" version="1.0" xmlns="http://www.w3.org/2005/07/scxml">
+    <datamodel>
+        <data expr="100" id="reqWant"/>
+    </datamodel>
+    <operations>
+        <task id="addItem" brole="waiter" name="addItemTask">
+            <principle method="Allocate" distributor="Random"/>
+            <callback on="complete" event="submit"/>
+        </task>
+    </operations>
+    <state id="Initial">
+        <transition target="Dining"/>
+    </state>
+    <state id="Dining" initial="Ordering">
+        <state id="Ordering">
+			<onentry>
+			    <call name="addItemTask" instancesExpr="reqWant"/>
+			</onentry>
+			<transition target="GOFinal"/>
+        </state>
+    </state>
+    <final id="GOFinal">
+		<onentry>
+			<log label="GOFinal" expr="'Test finished'"/>
+		</onentry>
+	</final>
+</businessclass>

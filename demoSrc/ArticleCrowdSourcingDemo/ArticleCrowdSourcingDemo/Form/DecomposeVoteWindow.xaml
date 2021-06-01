@@ -1,0 +1,44 @@
+﻿<mah:MetroWindow x:Class="ArticleCrowdSourcingDemo.Form.DecomposeVoteWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ArticleCrowdSourcingDemo.Form"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="Vote for decomposing plans" Height="400" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32*" MinHeight="32" MaxHeight="32"/>
+            <RowDefinition Height="60*"/>
+            <RowDefinition Height="32*" MinHeight="32" MaxHeight="32"/>
+            <RowDefinition Height="200*"/>
+            <RowDefinition Height="35*" MinHeight="35" MaxHeight="35"/>
+        </Grid.RowDefinitions>
+        <TextBox Name="TextBox_Title" Grid.Row="0" FontSize="18" Background="AliceBlue" Foreground="Blue" TextAlignment="Center">
+            [Description: TaskName]
+        </TextBox>
+        <TextBox Name="TextBox_Description" Grid.Row="1" FontSize="15">
+            test description
+        </TextBox>
+        <TextBox Grid.Row="2" FontSize="18" Background="Beige" Foreground="Coral" TextAlignment="Center">
+            [Candidate Decomposing Plans]
+        </TextBox>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25*"/>
+                <ColumnDefinition Width="75*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Name="ListBox_Composes" Margin="0,35,0,0" BorderBrush="LightBlue" BorderThickness="2" SelectionChanged="ListBox_Composes_SelectionChanged"/>
+            <ListBox x:Name="ListBox_Plans" Margin="10,35,0,0" BorderBrush="LightBlue" BorderThickness="2" Grid.Column="1"/>
+
+            <Label Content="Candidate decomposes:" Grid.Column="0" Margin="0,10,20,0" VerticalAlignment="Top" Height="25"/>
+            <Label Content="Step plans of choosing decomposing:" Grid.Column="1" Margin="10,10,0,0" VerticalAlignment="Top" Height="25"/>
+
+        </Grid>
+        <Grid Grid.Row="4" Background="Lavender">
+            <Button Name="Button_VoteThis" Content="Vote this" Margin="250,5,250,5" Click="Button_VoteThis_Click"/>
+        </Grid>
+    </Grid>
+</mah:MetroWindow>
+
