@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+
+<SyntaxDefinition name ="Labeled Transition Systems" extensions = ".lts">
+
+  <Environment>
+    <Custom name="TypeReference" bold="false" italic="false" color="Black" />
+    <Custom name="UnknownEntity" bold="false" italic="false" color="Black" />
+  </Environment>
+
+  <Properties>
+    <Property name="LineComment" value="//"/>
+  </Properties>
+
+  <Digits name ="Digits" bold ="false" italic ="false" color ="DarkBlue"/>
+
+  <RuleSets>
+    <RuleSet ignorecase = "false">
+      <Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}:;"' ,	.?</Delimiters>
+
+      <Span name ="LineComment" bold ="false" italic ="false" color ="Green" stopateol ="true">
+        <Begin>//</Begin>
+      </Span>
+
+
+      <Span name ="BlockComment" bold ="false" italic ="false" color ="Green" stopateol ="false">
+        <Begin>/*</Begin>
+        <End>*/</End>
+      </Span>
+
+      <Span name ="String" bold ="false" italic ="false" color ="Green" stopateol ="false" escapecharacter="\">
+        <Begin>&quot;</Begin>
+        <End>&quot;</End>
+      </Span>
+
+      <Span name = "Character" bold = "false" italic = "false" color = "Sienna" stopateol = "true" escapecharacter="\">
+        <Begin>&apos;</Begin>
+        <End>&apos;</End>
+      </Span>
+
+      <Span name = "Assertion" rule = "AssertionRuleSet" bold = "false" italic = "false" color = "Black" stopateol = "false">
+        <Begin color="Blue">#assert</Begin>
+        <End color="Black">;</End>
+      </Span>
+
+      <MarkPrevious bold = "true" italic = "false" color = "MidnightBlue">(</MarkPrevious>
+
+      <KeyWords name = "Punctuation" bold = "false" italic = "false" color = "Red">
+        <Key word = "?" description=""/>
+        <Key word = "+" description=""/>
+        <Key word = "-" description=""/>
+        <Key word = "/" description=""/>
+        <Key word = "%" description=""/>
+        <Key word = "*" description=""/>
+        <Key word = "^" description=""/>
+        <Key word = "=" description=""/>
+        <Key word = "~" description=""/>
+        <Key word = "!" description=""/>
+        <Key word = "|" description=""/>
+        <Key word = "&amp;" description=""/>
+        <Key word = "#" description=""/>
+        <Key word = ">" description=""/>
+        <Key word = "&lt;" description=""/>
+        <Key word = "[]" description=""/>
+      </KeyWords>
+
+
+      <KeyWords name ="CSPKeyWords" bold="false" italic = "false" color = "Blue">
+        <Key word =  "import" description=""/>
+        <Key word =  "assert" description="add an assertion in the model: assert(condition)."/>
+        <Key word =  "define" description="define a proposition or a constant."/>
+        <Key word =  "alphabet" description="define the alphabet of a process manually."/>
+        <Key word =  "if" description="conditional choice: if (cond) { P } else { Q }"/>
+        <Key word =  "ifa" description="conditional choice with atomic condtion evaluation: ifa (cond) { P } else { Q }"/>
+        <Key word =  "ifb" description="conditional choice with blocking condtion evaluation: ifb (cond) { P }"/>
+        <Key word =  "else" description="conditional choice: if (cond) { P } else { Q }"/>
+        <Key word =  "case" description="general choice: case { cond1: P1 cond2: P2 default: P }"/>
+        <Key word =  "default" description="default condition for general choice: case { cond1: P1 cond2: P2 default: P }"/>
+        <Key word =  "while" description="while loop, can only be used inside the data operation"/>
+        <Key word =  "true" description="true constant"/>
+        <Key word =  "false" description="false constant"/>
+        <Key word =  "channel" description="define a global channel, e.g., channel ch 4;"/>
+        <Key word =  "var" description="global variable declarition, e.g., var x = 9;"/>
+        <Key word =  "hvar" description="hidden variable declarition: hvar x = 9; &#xD;hidden variable is omitted in system states."/>
+        <Key word =  "init" description="special event denoting system initialization."/>
+        <Key word =  "call" description="invoking a static c# method, e.g., call(max, 10, 2), where max is the method name and 10 and 2 are arguments."/>
+        <Key word =  "tau" description="special event denoting an invisible event."/>
+        <Key word =  "enum" description="define an enumeration"/>
+        <Key word =  "interrupt" description="Process P interrupt Q behaves as specified by P until the first visible event of Q is engaged and then the control transfers to Q: P() interrupt Q() "/>
+        <Key word =  "atomic" description="Atomic sequence: atomic{P}, where P continues to execute until blocked or terminated."/>
+        <Key word =  "new" description="create a new c# library object: var &lt;Hashtable> table = new Hashtable(64);"/>
+      </KeyWords>
+
+      <KeyWords name ="CSP Process" bold="true" italic = "false" color = "MidnightBlue">
+        <Key word =  "Skip" description="Skip process terminates." />
+        <Key word =  "Stop" description="Stop process deadlocks." />
+      </KeyWords>
+
+      <KeyWords name ="Channel Methods" bold="false" italic = "false" color = "#2B91AF">
+        <Key word =  "cfull" description="a boolean function to test whether the an asynchronous channel is full or not. e.g. call(cfull, c)"/>
+        <Key word =  "cempty" description="a boolean function to test whether the an asynchronous channel is empty or not. e.g. call(cempty, c)"/>
+        <Key word =  "ccount" description="an integer function to return the number of elements in the buffer of an asynchronous channel. e.g. call(ccount, c)"/>
+        <Key word =  "csize" description="an integer function to return the buffer size of an asynchronous channel. e.g. call(cfull, c)"/>
+        <Key word =  "cpeek" description="return the first element of an asynchronous channel. e.g. call(cpeek, c)"/>
+      </KeyWords>
+    </RuleSet>
+
+    <RuleSet name = "AssertionRuleSet" ignorecase="false">
+
+      <Span name ="String" bold ="false" italic ="false" color ="Green" stopateol ="false" escapecharacter="\">
+        <Begin>&quot;</Begin>
+        <End>&quot;</End>
+      </Span>
+
+      <Delimiters>&amp;~!%^*()+|\#/{}:;"' ,	.?</Delimiters>
+
+      <MarkPrevious bold = "true" italic = "false" color = "MidnightBlue">(</MarkPrevious>
+
+      <KeyWords name = "Operators" bold="true" italic="false" color="Red">
+        <Key word = "|=" description=""/>
+        <Key word = "=" description=""/>
+        <Key word = "|" description=""/>
+        <Key word = "&amp;" description=""/>
+        <Key word = "[]" description=""/>
+        <Key word = "&lt;>" description=""/>
+        <Key word = "&lt;>[]" description=""/>
+        <Key word = "[]&lt;>" description=""/>
+        <Key word = "-" description=""/>
+        <Key word = "->" description=""/>
+        <Key word = ">" description=""/>
+        <Key word = "R" description=""/>
+        <Key word = "G" description=""/>
+        <Key word = "F" description=""/>
+        <Key word = "X" description=""/>
+        <Key word = "V" description=""/>
+        <Key word = "U" description=""/>
+      </KeyWords>
+
+      <KeyWords name ="KeyWords" bold="false" italic = "false" color = "Blue">
+
+        <Key word =  "assert" description="assert a model satisfies a propery." />
+        <Key word =  "define" description="define a proposition or a constant."/>
+        <Key word =  "deadlockfree" description="Deadlockfree checking: #assert P() deadlockfree;"/>
+        <Key word =  "divergencefree" description="Divergencefree checking: #assert P() deadlockfree;"/>
+        <Key word =  "deterministic" description="Deterministic checking: #assert P() deterministic; If a process is deterministic, then for any state, there is no two out-going transitions leading to different states but with the same event."/>
+        <Key word =  "nonterminating" description="Nonterminating checking: #assert P() nonterminating;"/>
+        <Key word =  "reaches" description="Reachability checking: #assert P() reaches goal;"/>
+        <Key word =  "refines" description="Refinement checking: #assert P() refines Q();"/>
+        <Key word =  "refines&lt;F>" description="Stable failures refinement checking: #assert P() refines&lt;F> Q();"/>
+        <Key word =  "refines&lt;FD>" description="Failures and divergence refinement checking: #assert P() refines&lt;F> Q();"/>
+        <Key word = "&lt;F>" description=""/>
+        <Key word = "&lt;FD>" description=""/>
+        <Key word =  "true" description="true constant"/>
+        <Key word =  "false" description="false constant"/>
+        <Key word =  "init" description="special event denoting system initialization."/>
+        <Key word =  "tau" description="special event denoting an invisible event."/>
+        <Key word =  "with" description="keyword used with reachability checking: #assert P() reaches goal with min(weight);"/>
+        <Key word =  "min" description="keyword used with reachability checking: #assert P() reaches goal with min(weight);"/>
+        <Key word =  "max" description="keyword used with reachability checking: #assert P() reaches goal with max(weight);"/>
+      </KeyWords>
+
+    </RuleSet>
+
+  </RuleSets>
+
+</SyntaxDefinition>
+

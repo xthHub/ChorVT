@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_aAlVNLWZEd-rd-3BMrFvLg" name="umlExample2">
+  <packageImport xmi:id="_aAlVNbWZEd-rd-3BMrFvLg">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:StateMachine" xmi:id="_b2AlgLWZEd-rd-3BMrFvLg" name="StateMachine_0">
+    <region xmi:id="_b2AlgbWZEd-rd-3BMrFvLg" name="Region_0">
+      <subvertex xmi:type="uml:Pseudostate" xmi:id="_dvAHcLWZEd-rd-3BMrFvLg" name="Initial_0"/>
+      <subvertex xmi:type="uml:State" xmi:id="_eq6WELWZEd-rd-3BMrFvLg" name="Idle"/>
+      <subvertex xmi:type="uml:State" xmi:id="_garDgLWZEd-rd-3BMrFvLg" name="Maintenance"/>
+      <subvertex xmi:type="uml:State" xmi:id="_nHFRILWZEd-rd-3BMrFvLg" name="Active">
+        <entry xmi:type="uml:Activity" xmi:id="_9-hGcLWaEd-rd-3BMrFvLg" name="readCard"/>
+        <exit xmi:type="uml:Activity" xmi:id="_CvGgkLWbEd-rd-3BMrFvLg" name="ejectCard"/>
+        <region xmi:id="_OSs8ELWaEd-rd-3BMrFvLg" name="Region_0">
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_OtYF4LWaEd-rd-3BMrFvLg" name="Initial_1"/>
+          <subvertex xmi:type="uml:State" xmi:id="_P3lPMLWaEd-rd-3BMrFvLg" name="Validating"/>
+          <subvertex xmi:type="uml:State" xmi:id="_SsowwLWaEd-rd-3BMrFvLg" name="Selecting"/>
+          <subvertex xmi:type="uml:State" xmi:id="_Xfc_gLWaEd-rd-3BMrFvLg" name="Processing"/>
+          <subvertex xmi:type="uml:State" xmi:id="_eVRAwLWaEd-rd-3BMrFvLg" name="Printing"/>
+          <transition xmi:id="_hHyLsLWaEd-rd-3BMrFvLg" name="From_Initial_0_to_Validating_Transition_0" source="_OtYF4LWaEd-rd-3BMrFvLg" target="_P3lPMLWaEd-rd-3BMrFvLg"/>
+          <transition xmi:id="_hnhbsLWaEd-rd-3BMrFvLg" name="From_Validating_to_Selecting_Transition_0" source="_P3lPMLWaEd-rd-3BMrFvLg" target="_SsowwLWaEd-rd-3BMrFvLg"/>
+          <transition xmi:id="_iI5qcLWaEd-rd-3BMrFvLg" name="From_Selecting_to_Processing_Transition_0" source="_SsowwLWaEd-rd-3BMrFvLg" target="_Xfc_gLWaEd-rd-3BMrFvLg"/>
+          <transition xmi:id="_ibE_kLWaEd-rd-3BMrFvLg" name="From_Processing_to_Selecting_Transition_0" source="_Xfc_gLWaEd-rd-3BMrFvLg" target="_SsowwLWaEd-rd-3BMrFvLg" guard="_I-A54LWbEd-rd-3BMrFvLg">
+            <ownedRule xmi:id="_I-A54LWbEd-rd-3BMrFvLg" name="Guard">
+              <specification xmi:type="uml:LiteralString" xmi:id="_I-A54bWbEd-rd-3BMrFvLg" value="more"/>
+            </ownedRule>
+          </transition>
+          <transition xmi:id="_jA7eoLWaEd-rd-3BMrFvLg" name="From_Processing_to_Printing_Transition_0" source="_Xfc_gLWaEd-rd-3BMrFvLg" target="_eVRAwLWaEd-rd-3BMrFvLg"/>
+          <transition xmi:id="_kTCmwLWaEd-rd-3BMrFvLg" name="From_Printing_to_Idle_Transition_0" source="_eVRAwLWaEd-rd-3BMrFvLg" target="_eq6WELWZEd-rd-3BMrFvLg"/>
+        </region>
+      </subvertex>
+      <transition xmi:id="_jTmYcLWZEd-rd-3BMrFvLg" name="maintain" source="_eq6WELWZEd-rd-3BMrFvLg" target="_garDgLWZEd-rd-3BMrFvLg"/>
+      <transition xmi:id="_kF9pgLWZEd-rd-3BMrFvLg" name="finish" source="_garDgLWZEd-rd-3BMrFvLg" target="_eq6WELWZEd-rd-3BMrFvLg"/>
+      <transition xmi:id="_ro7EoLWZEd-rd-3BMrFvLg" name="From_Initial_0_to_Idle_Transition_0" source="_dvAHcLWZEd-rd-3BMrFvLg" target="_eq6WELWZEd-rd-3BMrFvLg"/>
+      <transition xmi:id="_sDmOcLWZEd-rd-3BMrFvLg" name="cardInserted" source="_eq6WELWZEd-rd-3BMrFvLg" target="_nHFRILWZEd-rd-3BMrFvLg"/>
+    </region>
+  </packagedElement>
+  <profileApplication xmi:id="_aAlVNrWZEd-rd-3BMrFvLg">
+    <eAnnotations xmi:id="_aAlVN7WZEd-rd-3BMrFvLg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/uml2/schemas/Standard/1#/"/>
+    </eAnnotations>
+    <appliedProfile href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
+  </profileApplication>
+</uml:Model>
