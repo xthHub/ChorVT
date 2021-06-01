@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:mida="http://mida.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.2">
+  <bpmn:collaboration id="Collaboration_12vuf98">
+    <bpmn:participant id="PC_Chair" name="Chair" processRef="Process_1" />
+    <bpmn:participant id="Reviewers" name="Reviewers" processRef="Process_0l7ekin">
+      <bpmn:participantMultiplicity minimum="3" maximum="3" />
+    </bpmn:participant>
+    <bpmn:participant id="Contact_Author" name="Author" processRef="Process_0kakzp4" />
+    <bpmn:messageFlow id="Notification" name="Notification" sourceRef="Send_Notification_Letter_To_Reviewer" targetRef="Notification_Received" />
+    <bpmn:messageFlow id="Review_Request" name="Review Request" sourceRef="Assign_Paper" targetRef="Paper_Received" />
+    <bpmn:messageFlow id="Review" name="Review" sourceRef="Submit_Review" targetRef="Receive_and_Combine_Reviews" />
+    <bpmn:messageFlow id="Feedback" name="Feedback" sourceRef="Send_Feedback_To_Reviewer" targetRef="Feedback_Review" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_1mgt86n" sourceRef="ExclusiveGateway_1rr5hb0" targetRef="Send_Notification_Letter_To_Reviewer" />
+    <bpmn:sequenceFlow id="SequenceFlow_12123o9" sourceRef="ExclusiveGateway_1rr5hb0" targetRef="Send_Feedback_To_Reviewer" />
+    <bpmn:sequenceFlow id="SequenceFlow_0b3rh0j" sourceRef="Review_Management" targetRef="Assign_Paper" />
+    <bpmn:sequenceFlow id="SequenceFlow_0e7hug5" sourceRef="Assign_Paper" targetRef="Receive_and_Combine_Reviews" />
+    <bpmn:sequenceFlow id="SequenceFlow_1x86x0q" sourceRef="Receive_and_Combine_Reviews" targetRef="Reviews_Evaluation" />
+    <bpmn:sequenceFlow id="SequenceFlow_1eh7a4r" sourceRef="Reviews_Evaluation" targetRef="ExclusiveGateway_1tpk8g1" />
+    <bpmn:sequenceFlow id="SequenceFlow_0znf01i" name="Accept" sourceRef="ExclusiveGateway_0s9l8g0" targetRef="Prepare_Acceptance_Letter">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Evaluation_decision === "accepted"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0t3kh0t" name="Reject" sourceRef="ExclusiveGateway_0s9l8g0" targetRef="Prepare_Rejection_Letter">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Evaluation_decision === "rejected"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1cmhapd" name="Borderline" sourceRef="ExclusiveGateway_0s9l8g0" targetRef="Discuss">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Evaluation_decision ===  "borderline"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0wwu098" sourceRef="Prepare_Rejection_Letter" targetRef="ExclusiveGateway_0mhv0x1" />
+    <bpmn:sequenceFlow id="SequenceFlow_0tj8w96" sourceRef="Prepare_Acceptance_Letter" targetRef="ExclusiveGateway_0mhv0x1" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qi6kdg" sourceRef="Discuss" targetRef="ExclusiveGateway_1tpk8g1" />
+    <bpmn:sequenceFlow id="SequenceFlow_0c8gmud" sourceRef="ExclusiveGateway_0mhv0x1" targetRef="ExclusiveGateway_1rr5hb0" />
+    <bpmn:sequenceFlow id="SequenceFlow_1f1ko3n" sourceRef="Send_Notification_Letter_To_Reviewer" targetRef="ExclusiveGateway_1re8hi9" />
+    <bpmn:sequenceFlow id="SequenceFlow_0fzgkbo" sourceRef="ExclusiveGateway_1tpk8g1" targetRef="ExclusiveGateway_0s9l8g0" />
+    <bpmn:dataObjectReference id="Letter" name="Letter" dataObjectRef="DataObject_1pa7enz">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Letter_subject" />
+          <mida:dataField dataField="Letter_evaluation" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_1pa7enz" />
+    <bpmn:sendTask id="Send_Notification_Letter_To_Reviewer" name="Send Result">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard>
+          <mida:exp>Letter_subject != undefined &amp; Letter_evaluation != undefined</mida:exp>
+        </mida:guard>
+        <mida:message>
+          <mida:field field="Letter_subject" />
+          <mida:field field="Letter_evaluation" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1mgt86n</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1f1ko3n</bpmn:outgoing>
+      <bpmn:property id="Property_14pn48s" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0bw3wnt">
+        <bpmn:sourceRef>Letter</bpmn:sourceRef>
+        <bpmn:targetRef>Property_14pn48s</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_0gzaryj">
+        <bpmn:sourceRef>Reviews</bpmn:sourceRef>
+        <bpmn:targetRef>Property_14pn48s</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="Send_Feedback_To_Reviewer" name="Send Feedback">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard>
+          <mida:exp>Reviews_reviewers != undefined &amp; Reviews_title != undefined &amp; Evaluation_decision != undefined</mida:exp>
+        </mida:guard>
+        <mida:message>
+          <mida:field field="Reviews_reviewers.pop()" />
+          <mida:field field="Reviews_title" />
+          <mida:field field="Evaluation_decision" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_12123o9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0a9a5fi</bpmn:outgoing>
+      <bpmn:property id="Property_1wtiz46" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1ppq993">
+        <bpmn:sourceRef>Reviews</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1wtiz46</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_0827kfz">
+        <bpmn:sourceRef>Evaluation</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1wtiz46</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:loopCardinality xsi:type="bpmn:tFormalExpression">3</bpmn:loopCardinality>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Decision_Process_Completed" name="Decision Process Completed">
+      <bpmn:incoming>SequenceFlow_0e0mqll</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_15eg2ll" name="Paper" dataObjectRef="DataObject_05qm7hr">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Paper_title = &#34;A New Paper&#34;" />
+          <mida:dataField dataField="Paper_contact = &#34;author@uni.it&#34;" />
+          <mida:dataField dataField="Paper_authors = &#34;A. Man, A. Girl&#34;" />
+          <mida:dataField dataField=" Paper_body = &#34;In this paper...&#34;" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_05qm7hr" />
+    <bpmn:dataObjectReference id="Evaluation" name="Evaluation" dataObjectRef="DataObject_16qsrew">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Evaluation_title" />
+          <mida:dataField dataField="Evaluation_decision" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_16qsrew" />
+    <bpmn:sendTask id="Assign_Paper" name="Assign Paper">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard>
+          <mida:exp>Paper_title != undefined &amp; Paper_body != undefined</mida:exp>
+        </mida:guard>
+        <mida:message>
+          <mida:field field="Paper_title" />
+          <mida:field field="Paper_body" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0b3rh0j</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0e7hug5</bpmn:outgoing>
+      <bpmn:property id="Property_0wufvcu" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0pz7bl9">
+        <bpmn:sourceRef>DataObjectReference_15eg2ll</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0wufvcu</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:loopCardinality xsi:type="bpmn:tFormalExpression">3</bpmn:loopCardinality>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:sendTask>
+    <bpmn:dataObjectReference id="Reviews" name="Reviews" dataObjectRef="DataObject_18ey30y">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Reviews_reviewers = []" />
+          <mida:dataField dataField="Reviews_scores = []" />
+          <mida:dataField dataField="Reviews_bodies = []" />
+          <mida:dataField dataField="Reviews_reviewer" />
+          <mida:dataField dataField="Reviews_title" />
+          <mida:dataField dataField="Reviews_score" />
+          <mida:dataField dataField="Reviews_body" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_18ey30y" />
+    <bpmn:task id="Discuss" name="Discuss">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:assignments>
+          <mida:assignment assignment="Evaluation_decision =  [&#34;accepted&#34;, &#34;rejected&#34;][Math.floor(Math.random() * 2)]" />
+        </mida:assignments>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1cmhapd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qi6kdg</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0gyyh08">
+        <bpmn:targetRef>Evaluation</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:task id="Prepare_Rejection_Letter" name="Prepare Rejection Letter">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:assignments>
+          <mida:assignment assignment="Letter_subject = &#34;Rejection Letter&#34;" />
+          <mida:assignment assignment="Letter_evaluation = &#34;Reject&#34;" />
+        </mida:assignments>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0t3kh0t</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0wwu098</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1w17d0y">
+        <bpmn:targetRef>Letter</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:task id="Prepare_Acceptance_Letter" name="Prepare Acceptance Letter">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:assignments>
+          <mida:assignment assignment="Letter_subject = &#34;Acceptance Letter&#34;" />
+          <mida:assignment assignment="Letter_evaluation = &#34;Accepted&#34;" />
+        </mida:assignments>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0znf01i</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0tj8w96</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1dfxbzh">
+        <bpmn:targetRef>Letter</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0s9l8g0" name="What is rhe reviever decision?">
+      <bpmn:incoming>SequenceFlow_0fzgkbo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0znf01i</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0t3kh0t</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1cmhapd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1tpk8g1">
+      <bpmn:incoming>SequenceFlow_1eh7a4r</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0qi6kdg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0fzgkbo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Reviews_Evaluation" name="Evaluate">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:assignments>
+          <mida:assignment assignment="Evaluation_title = &#34;Evaluation of the Paper&#34;" />
+          <mida:assignment assignment="Evaluation_decision = Reviews_scores[Math.floor(Math.random() * 3)]" />
+        </mida:assignments>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1x86x0q</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1eh7a4r</bpmn:outgoing>
+      <bpmn:property id="Property_1w88jq1" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_02305kk">
+        <bpmn:sourceRef>Reviews</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1w88jq1</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1syw6ji">
+        <bpmn:targetRef>Evaluation</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:receiveTask id="Receive_and_Combine_Reviews" name="Receive  Reviews">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:assignments>
+          <mida:assignment assignment="Reviews_reviewers.push(Reviews_reviewer)" />
+          <mida:assignment assignment="Reviews_title = Paper_title" />
+          <mida:assignment assignment="Reviews_scores.push(Reviews_score)" />
+          <mida:assignment assignment="Reviews_bodies.push(Reviews_body)" />
+        </mida:assignments>
+        <mida:message>
+          <mida:field field="Reviews_reviewer" />
+          <mida:field field="Paper_title" />
+          <mida:field field="Reviews_score" />
+          <mida:field field="Reviews_body" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0e7hug5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1x86x0q</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_11lh9zk">
+        <bpmn:targetRef>Reviews</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:loopCardinality xsi:type="bpmn:tFormalExpression">3</bpmn:loopCardinality>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:receiveTask>
+    <bpmn:startEvent id="Review_Management" name="Review Management">
+      <bpmn:outgoing>SequenceFlow_0b3rh0j</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0a9a5fi" sourceRef="Send_Feedback_To_Reviewer" targetRef="ExclusiveGateway_1re8hi9" />
+    <bpmn:parallelGateway id="ExclusiveGateway_1rr5hb0">
+      <bpmn:incoming>SequenceFlow_0c8gmud</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12123o9</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1mgt86n</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0e0mqll" sourceRef="ExclusiveGateway_1re8hi9" targetRef="Decision_Process_Completed" />
+    <bpmn:parallelGateway id="ExclusiveGateway_1re8hi9">
+      <bpmn:incoming>SequenceFlow_1f1ko3n</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0a9a5fi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0e0mqll</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0mhv0x1">
+      <bpmn:incoming>SequenceFlow_0wwu098</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0tj8w96</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0c8gmud</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+  </bpmn:process>
+  <bpmn:process id="Process_0l7ekin" isExecutable="false">
+    <bpmn:sequenceFlow id="SequenceFlow_1t1lzep" sourceRef="Feedback_Review" targetRef="Review_Process_Completed" />
+    <bpmn:sequenceFlow id="SequenceFlow_1tehtl7" sourceRef="Submit_Review" targetRef="Feedback_Review" />
+    <bpmn:sequenceFlow id="SequenceFlow_01z9arc" sourceRef="Prepare_Review" targetRef="Submit_Review" />
+    <bpmn:sequenceFlow id="SequenceFlow_1o3wadc" sourceRef="Paper_Received" targetRef="Prepare_Review" />
+    <bpmn:endEvent id="Review_Process_Completed" name="Review Process Completed">
+      <bpmn:incoming>SequenceFlow_1t1lzep</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:receiveTask id="Feedback_Review" name="Feedback Received">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:message>
+          <mida:field field="PaperReview_myName" isCorrelation="true" />
+          <mida:field field="PaperReview_title" />
+          <mida:field field="PaperReview_decision" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1tehtl7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1t1lzep</bpmn:outgoing>
+      <bpmn:property id="Property_094tjr9" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0ik7g9z">
+        <bpmn:sourceRef>Paper_Review</bpmn:sourceRef>
+        <bpmn:targetRef>Property_094tjr9</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:receiveTask>
+    <bpmn:sendTask id="Submit_Review" name="Submit Review">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard>
+          <mida:exp>PaperReview_title != undefined &amp; PaperReview_score != undefined &amp; PaperReview_body != undefined</mida:exp>
+        </mida:guard>
+        <mida:assignments>
+          <mida:assignment assignment="PaperReview_myName = &#34;I am &#34;+instance" />
+          <mida:assignment />
+        </mida:assignments>
+        <mida:message>
+          <mida:field field="PaperReview_myName" />
+          <mida:field field="PaperReview_title" />
+          <mida:field field="PaperReview_score" />
+          <mida:field field="PaperReview_body" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_01z9arc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1tehtl7</bpmn:outgoing>
+      <bpmn:property id="Property_19juigy" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_17zt5ny">
+        <bpmn:sourceRef>Paper_Review</bpmn:sourceRef>
+        <bpmn:targetRef>Property_19juigy</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
+    <bpmn:startEvent id="Paper_Received" name="Paper Received">
+      <bpmn:extensionElements>
+        <mida:message>
+          <mida:field field="Text_title" />
+          <mida:field field="Text_body" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1o3wadc</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:startEvent>
+    <bpmn:dataObjectReference id="Paper_Review" name="Paper Review" dataObjectRef="DataObject_0tzybv9">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="PaperReview_title" />
+          <mida:dataField dataField="PaperReview_score" />
+          <mida:dataField dataField="PaperReview_body" />
+          <mida:dataField dataField="PaperReview_decision" />
+          <mida:dataField dataField="PaperReview_myName" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_0tzybv9" />
+    <bpmn:task id="Prepare_Review" name="Paper Review">
+      <bpmn:documentation />
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard>
+          <mida:exp>Text_title != undefined &amp; Text_body != undefined</mida:exp>
+        </mida:guard>
+        <mida:assignments>
+          <mida:assignment assignment="PaperReview_title =  Text_title" />
+          <mida:assignment assignment="PaperReview_score = [&#34;accepted&#34;, &#34;rejected&#34;, &#34;borderline&#34;][Math.floor(Math.random() * 3)]" />
+          <mida:assignment assignment="PaperReview_body = &#34;Review of &#34;+instance" />
+        </mida:assignments>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1o3wadc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01z9arc</bpmn:outgoing>
+      <bpmn:property id="Property_0cklupr" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0eeapap">
+        <bpmn:sourceRef>DataObjectReference_1tdwa8u</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0cklupr</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0gdn4ud">
+        <bpmn:targetRef>Paper_Review</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:dataObjectReference id="DataObjectReference_1tdwa8u" name="Text" dataObjectRef="DataObject_069jjfa">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Text_title" />
+          <mida:dataField dataField="Text_body" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_069jjfa" />
+  </bpmn:process>
+  <bpmn:process id="Process_0kakzp4" isExecutable="false">
+    <bpmn:endEvent id="Notification_Processed" name="Notification Processed">
+      <bpmn:incoming>SequenceFlow_1ovdr7z</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Read_Notification" name="Receive Result">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0o6kwvb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ovdr7z</bpmn:outgoing>
+      <bpmn:property id="Property_1pb6s6x" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_04e0kbo">
+        <bpmn:sourceRef>DataObjectReference_0q24mqk</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1pb6s6x</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:task>
+    <bpmn:startEvent id="Notification_Received" name="Notification Received">
+      <bpmn:extensionElements>
+        <mida:message>
+          <mida:field field="Notification_subject" />
+          <mida:field field="Notification_evaluation" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0o6kwvb</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:startEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_0q24mqk" name="Notification" dataObjectRef="DataObject_1334k13">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Notification_subject" />
+          <mida:dataField dataField="Notification_evaluation" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_1334k13" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ovdr7z" sourceRef="Read_Notification" targetRef="Notification_Processed" />
+    <bpmn:sequenceFlow id="SequenceFlow_0o6kwvb" sourceRef="Notification_Received" targetRef="Read_Notification" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_12vuf98">
+      <bpmndi:BPMNShape id="Participant_02jrd3w_di" bpmnElement="PC_Chair">
+        <dc:Bounds x="97" y="-48" width="1424" height="467" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Review_Management" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="148" y="129" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="134" y="165" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0pw3577_di" bpmnElement="Reviewers">
+        <dc:Bounds x="189.4275184275184" y="433.05896805896805" width="716.5887417350832" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1sa8leg_di" bpmnElement="Contact_Author">
+        <dc:Bounds x="1179" y="433" width="342" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1uhx3ox_di" bpmnElement="Notification_Received" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1238" y="478" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1229" y="516" width="55" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0o0hkfb_di" bpmnElement="Read_Notification">
+        <dc:Bounds x="1315" y="456" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0o6kwvb_di" bpmnElement="SequenceFlow_0o6kwvb" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="1274" y="496" />
+        <di:waypoint x="1315" y="496" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1250" y="475" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1e5bvk3_di" bpmnElement="Notification_Processed" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1451" y="478" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1443" y="517" width="55" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ovdr7z_di" bpmnElement="SequenceFlow_1ovdr7z" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="1415" y="496" />
+        <di:waypoint x="1451" y="496" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1388" y="475" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b3rh0j_di" bpmnElement="SequenceFlow_0b3rh0j" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="184" y="147" />
+        <di:waypoint x="247" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="215.5" y="125.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e7hug5_di" bpmnElement="SequenceFlow_0e7hug5" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="347" y="147" />
+        <di:waypoint x="390" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="368.5" y="125.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_00bygr0_di" bpmnElement="Assign_Paper">
+        <dc:Bounds x="247" y="107" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_0uymzo2_di" bpmnElement="Receive_and_Combine_Reviews">
+        <dc:Bounds x="390" y="107" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0wnqycu_di" bpmnElement="Reviews_Evaluation">
+        <dc:Bounds x="532" y="107" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x86x0q_di" bpmnElement="SequenceFlow_1x86x0q" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="490" y="147" />
+        <di:waypoint x="532" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="511" y="125" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_1jof010_di" bpmnElement="Evaluation" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="632" y="-42" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="674" y="-13" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1syw6ji_di" bpmnElement="DataOutputAssociation_1syw6ji">
+        <di:waypoint x="582" y="107" />
+        <di:waypoint x="582" y="-14" />
+        <di:waypoint x="632" y="-14" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1tpk8g1_di" bpmnElement="ExclusiveGateway_1tpk8g1" isMarkerVisible="true" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="675" y="122" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="700.0215146299483" y="175" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1eh7a4r_di" bpmnElement="SequenceFlow_1eh7a4r" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="632" y="147" />
+        <di:waypoint x="675" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="653.5" y="125" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0s9l8g0_di" bpmnElement="ExclusiveGateway_0s9l8g0" isMarkerVisible="true" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="769" y="122" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="703" y="96" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_180u1y9_di" bpmnElement="Prepare_Acceptance_Letter">
+        <dc:Bounds x="873" y="-7" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0znf01i_di" bpmnElement="SequenceFlow_0znf01i" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="794" y="122" />
+        <di:waypoint x="794" y="33" />
+        <di:waypoint x="873" y="33" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="792" y="71" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0b6h7ye_di" bpmnElement="Prepare_Rejection_Letter">
+        <dc:Bounds x="873" y="107" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0t3kh0t_di" bpmnElement="SequenceFlow_0t3kh0t" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="819" y="147" />
+        <di:waypoint x="873" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="831" y="125" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1skua6u_di" bpmnElement="Discuss">
+        <dc:Bounds x="873" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cmhapd_di" bpmnElement="SequenceFlow_1cmhapd" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="794" y="172" />
+        <di:waypoint x="794" y="263" />
+        <di:waypoint x="873" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="784" y="211" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0mhv0x1_di" bpmnElement="ExclusiveGateway_0mhv0x1" isMarkerVisible="true" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1010" y="122" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1055.716" y="175" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wwu098_di" bpmnElement="SequenceFlow_0wwu098" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="973" y="147" />
+        <di:waypoint x="1010" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1002" y="125" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tj8w96_di" bpmnElement="SequenceFlow_0tj8w96" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="973" y="33" />
+        <di:waypoint x="1035" y="33" />
+        <di:waypoint x="1035" y="122" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1014.5" y="11" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qi6kdg_di" bpmnElement="SequenceFlow_0qi6kdg" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="973" y="263" />
+        <di:waypoint x="1004" y="263" />
+        <di:waypoint x="1004" y="319" />
+        <di:waypoint x="700" y="319" />
+        <di:waypoint x="700" y="172" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1019" y="284.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0c8gmud_di" bpmnElement="SequenceFlow_0c8gmud" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="1060" y="147" />
+        <di:waypoint x="1098" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1103.358" y="125.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_0stuya1_di" bpmnElement="Send_Feedback_To_Reviewer">
+        <dc:Bounds x="1202" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_0hd3dus_di" bpmnElement="Send_Notification_Letter_To_Reviewer">
+        <dc:Bounds x="1202" y="40" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_164msq2_di" bpmnElement="Decision_Process_Completed" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1463" y="129" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1439" y="168" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1f1ko3n_di" bpmnElement="SequenceFlow_1f1ko3n" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="1302" y="80" />
+        <di:waypoint x="1392" y="80" />
+        <di:waypoint x="1392" y="122" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1386" y="125.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_18rfj1e_di" bpmnElement="Notification" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="1302" y="101" />
+        <di:waypoint x="1338" y="101" />
+        <di:waypoint x="1338" y="375" />
+        <di:waypoint x="1266" y="481" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1283" y="347" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_07wskhe_di" bpmnElement="Letter" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1159" y="-9" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1163" y="44" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0bw3wnt_di" bpmnElement="DataInputAssociation_0bw3wnt">
+        <di:waypoint x="1195" y="16" />
+        <di:waypoint x="1252" y="16" />
+        <di:waypoint x="1252" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1w17d0y_di" bpmnElement="DataOutputAssociation_1w17d0y">
+        <di:waypoint x="923" y="107" />
+        <di:waypoint x="923" y="87" />
+        <di:waypoint x="1109" y="87" />
+        <di:waypoint x="1109" y="29" />
+        <di:waypoint x="1159" y="30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1dfxbzh_di" bpmnElement="DataOutputAssociation_1dfxbzh">
+        <di:waypoint x="973" y="12" />
+        <di:waypoint x="1159" y="12" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_1m44367_di" bpmnElement="Reviews" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="564" y="316" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="563" y="369" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_02305kk_di" bpmnElement="DataInputAssociation_02305kk">
+        <di:waypoint x="582" y="316" />
+        <di:waypoint x="582" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_11lh9zk_di" bpmnElement="DataOutputAssociation_11lh9zk">
+        <di:waypoint x="464" y="187" />
+        <di:waypoint x="464" y="335" />
+        <di:waypoint x="564" y="335" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1ppq993_di" bpmnElement="DataInputAssociation_1ppq993">
+        <di:waypoint x="600" y="354" />
+        <di:waypoint x="1221" y="354" />
+        <di:waypoint x="1221" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0gzaryj_di" bpmnElement="DataInputAssociation_0gzaryj">
+        <di:waypoint x="600" y="341" />
+        <di:waypoint x="1162" y="341" />
+        <di:waypoint x="1162" y="101" />
+        <di:waypoint x="1202" y="101" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_0tpxs66_di" bpmnElement="Paper_Received" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="279" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="258" y="586" width="79" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1jdtaxn_di" bpmnElement="Review_Request" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="297" y="187" />
+        <di:waypoint x="297" y="547" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="306" y="334" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1ynbgpq_di" bpmnElement="Prepare_Review">
+        <dc:Bounds x="354" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o3wadc_di" bpmnElement="SequenceFlow_1o3wadc" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="315" y="565" />
+        <di:waypoint x="354" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="289.5" y="543.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01z9arc_di" bpmnElement="SequenceFlow_01z9arc" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="454" y="565" />
+        <di:waypoint x="514" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="439" y="543.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0vikc17_di" bpmnElement="Review" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="563" y="525" />
+        <di:waypoint x="563" y="476" />
+        <di:waypoint x="440" y="476" />
+        <di:waypoint x="440" y="187" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="483" y="455" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_1i1400v_di" bpmnElement="Submit_Review">
+        <dc:Bounds x="514" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tehtl7_di" bpmnElement="SequenceFlow_1tehtl7" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="614" y="565" />
+        <di:waypoint x="667" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="640.5" y="543.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_1qewvxv_di" bpmnElement="Feedback_Review">
+        <dc:Bounds x="667" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1rgt1bt_di" bpmnElement="Feedback" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="1252" y="258" />
+        <di:waypoint x="1252" y="382" />
+        <di:waypoint x="713" y="382" />
+        <di:waypoint x="713" y="525" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="959" y="361" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1v8jzyx_di" bpmnElement="Review_Process_Completed" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="818.0162601626016" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="797" y="586" width="79" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1t1lzep_di" bpmnElement="SequenceFlow_1t1lzep" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="767" y="565" />
+        <di:waypoint x="818" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="792.5" y="543.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fzgkbo_di" bpmnElement="SequenceFlow_0fzgkbo" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="725" y="147" />
+        <di:waypoint x="769" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="747" y="125" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0gyyh08_di" bpmnElement="DataOutputAssociation_0gyyh08">
+        <di:waypoint x="873" y="276" />
+        <di:waypoint x="653" y="276" />
+        <di:waypoint x="653" y="8" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_034khkm_di" bpmnElement="Paper_Review" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="475.05899999999997" y="611.854" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="459" y="665" width="69" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0gdn4ud_di" bpmnElement="DataOutputAssociation_0gdn4ud">
+        <di:waypoint x="404" y="605" />
+        <di:waypoint x="404" y="644" />
+        <di:waypoint x="475" y="644" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_17zt5ny_di" bpmnElement="DataInputAssociation_17zt5ny">
+        <di:waypoint x="511" y="637" />
+        <di:waypoint x="554" y="637" />
+        <di:waypoint x="554" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0827kfz_di" bpmnElement="DataInputAssociation_0827kfz">
+        <di:waypoint x="668" y="-17" />
+        <di:waypoint x="1148" y="-17" />
+        <di:waypoint x="1148" y="196" />
+        <di:waypoint x="1202" y="196" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_1tdwa8u_di" bpmnElement="DataObjectReference_1tdwa8u" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="320.1114285714286" y="444.76857142857136" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="328" y="498" width="21" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0eeapap_di" bpmnElement="DataInputAssociation_0eeapap">
+        <di:waypoint x="356" y="470" />
+        <di:waypoint x="416" y="471" />
+        <di:waypoint x="416" y="525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0ik7g9z_di" bpmnElement="DataInputAssociation_0ik7g9z">
+        <di:waypoint x="511" y="637" />
+        <di:waypoint x="723" y="637" />
+        <di:waypoint x="723" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_0q24mqk_di" bpmnElement="DataObjectReference_0q24mqk" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1285" y="546.7854545454545" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1276" y="600" width="55" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_04e0kbo_di" bpmnElement="DataInputAssociation_04e0kbo">
+        <di:waypoint x="1321" y="572" />
+        <di:waypoint x="1364" y="572" />
+        <di:waypoint x="1364" y="536" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_15eg2ll_di" bpmnElement="DataObjectReference_15eg2ll" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="279" y="-9" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="282" y="-33" width="31" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0pz7bl9_di" bpmnElement="DataInputAssociation_0pz7bl9">
+        <di:waypoint x="297" y="41" />
+        <di:waypoint x="297" y="107" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12123o9_di" bpmnElement="SequenceFlow_12123o9">
+        <di:waypoint x="1123" y="172" />
+        <di:waypoint x="1123" y="218" />
+        <di:waypoint x="1202" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mgt86n_di" bpmnElement="SequenceFlow_1mgt86n">
+        <di:waypoint x="1123" y="122" />
+        <di:waypoint x="1123" y="80" />
+        <di:waypoint x="1202" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0a9a5fi_di" bpmnElement="SequenceFlow_0a9a5fi">
+        <di:waypoint x="1302" y="218" />
+        <di:waypoint x="1392" y="218" />
+        <di:waypoint x="1392" y="172" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_0yl6e60_di" bpmnElement="ExclusiveGateway_1rr5hb0">
+        <dc:Bounds x="1098" y="122" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_0u3smo6_di" bpmnElement="ExclusiveGateway_1re8hi9">
+        <dc:Bounds x="1367" y="122" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e0mqll_di" bpmnElement="SequenceFlow_0e0mqll">
+        <di:waypoint x="1417" y="147" />
+        <di:waypoint x="1463" y="147" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
